@@ -309,7 +309,11 @@ with col2:
     time_input = st.time_input("Observation Time (IST)", value=datetime.now(pytz.timezone("Asia/Kolkata")).time(), help="Set the time in Indian Standard Time.")
     timeline_days = st.slider("Visibility Timeline Days", 1, 3, 1, help="Select how many days to show in the visibility timeline.")
 
-observation_time = Time(datetime.combine(date_input, time_input).astimezone(pytz.timezone("Asia/Kolkata")))
+# --- FIX: Convert IST input to UTC for Astropy ---
+ist = pytz.timezone("Asia/Kolkata")
+dt_ist = ist.localize(datetime.combine(date_input, time_input))
+dt_utc = dt_ist.astimezone(pytz.utc)
+observation_time = Time(dt_utc)
 
 st.markdown("---")
 
