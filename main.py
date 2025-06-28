@@ -306,13 +306,16 @@ with col2:
     st.subheader("🔭 Observation Details")
     body_names = st.multiselect("Select Celestial Bodies:", bodies, default=['jupiter'], help="Select one or more objects to track.")
     date_input = st.date_input("Observation Date", value=datetime.now(pytz.timezone("Asia/Kolkata")), help="Choose the date for observation.")
-    time_input = st.time_input("Observation Time (IST)", value=datetime.now(pytz.timezone("Asia/Kolkata")).time(), help="Set the time in Indian Standard Time.")
+    # Allow user to select time in any timezone
+    time_input = st.time_input("Observation Time", value=datetime.now().time(), help="Set the time for observation.")
+    timezone_list = pytz.all_timezones
+    selected_timezone = st.selectbox("Time Zone", options=timezone_list, index=timezone_list.index("Asia/Kolkata"), help="Select the time zone for your observation time.")
     timeline_days = st.slider("Visibility Timeline Days", 1, 3, 1, help="Select how many days to show in the visibility timeline.")
 
-# --- FIX: Convert IST input to UTC for Astropy ---
-ist = pytz.timezone("Asia/Kolkata")
-dt_ist = ist.localize(datetime.combine(date_input, time_input))
-dt_utc = dt_ist.astimezone(pytz.utc)
+# Convert selected time and timezone to UTC for Astropy
+user_tz = pytz.timezone(selected_timezone)
+dt_user = user_tz.localize(datetime.combine(date_input, time_input))
+dt_utc = dt_user.astimezone(pytz.utc)
 observation_time = Time(dt_utc)
 
 st.markdown("---")
