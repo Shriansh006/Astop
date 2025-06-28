@@ -1,3 +1,8 @@
 astropy
 astroplan
 streamlit
+plotly
+pandas
+pytz
+numpy
+reportlab
